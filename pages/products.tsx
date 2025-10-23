@@ -142,16 +142,18 @@ export default function Products() {
   return (
     <ProtectedRoute>
       <Layout>
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-          {/* Header */}
-          <div className="mb-8">
-            <h1 className="text-3xl font-bold text-gray-900 mb-2">Products</h1>
-            <p className="text-gray-600">Browse our collection of {filteredProducts.length} products</p>
-          </div>
+        <div className="h-[calc(100vh-80px)] flex flex-col">
+          {/* Header and Search Bar - Fixed */}
+          <div className="flex-shrink-0 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 w-full">
+            {/* Header */}
+            <div className="mb-6">
+              <h1 className="text-3xl font-bold text-gray-900 mb-2">Products</h1>
+              <p className="text-gray-600">Browse our collection of {filteredProducts.length} products</p>
+            </div>
 
-          {/* Search and Sort Bar */}
-          <div className="bg-white rounded-xl shadow-sm p-4 mb-6">
-            <div className="flex flex-col md:flex-row gap-4">
+            {/* Search and Sort Bar */}
+            <div className="bg-white rounded-xl shadow-sm p-4">
+              <div className="flex flex-col md:flex-row gap-4">
               <div className="flex-1 relative">
                 <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
                 <input
@@ -177,15 +179,18 @@ export default function Products() {
                 <option value="rating-high">Rating: High to Low</option>
                 <option value="rating-low">Rating: Low to High</option>
               </select>
+              </div>
             </div>
           </div>
 
-          <div className="flex gap-6">
-            {/* Filters Sidebar */}
-            {showFilters && (
-              <div className="w-64 flex-shrink-0">
-                <div className="bg-white rounded-xl shadow-sm p-6 sticky top-4">
-                  <div className="flex items-center justify-between mb-4">
+          {/* Main Content Area with Scroll */}
+          <div className="flex-1 overflow-hidden max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
+            <div className="flex gap-6 h-full">
+              {/* Filters Sidebar */}
+              {showFilters && (
+                <div className="w-64 flex-shrink-0">
+                  <div className="bg-white rounded-xl shadow-sm h-full flex flex-col overflow-hidden">
+                  <div className="flex items-center justify-between p-6 pb-4 border-b">
                     <h2 className="text-lg font-semibold text-gray-900">Filters</h2>
                     <button
                       onClick={clearFilters}
@@ -195,7 +200,7 @@ export default function Products() {
                     </button>
                   </div>
 
-                  <div className="space-y-6">
+                  <div className="space-y-6 p-6 overflow-y-auto flex-1">
                     {/* Status Filter */}
                     <div>
                       <h3 className="font-medium text-gray-900 mb-3">Status</h3>
@@ -286,26 +291,29 @@ export default function Products() {
             )}
 
             {/* Products Grid */}
-            <div className="flex-1">
+            <div className="flex-1 flex flex-col overflow-hidden">
               {paginatedProducts.length === 0 ? (
                 <div className="bg-white rounded-xl shadow-sm p-12 text-center">
                   <p className="text-gray-500 text-lg">No products found matching your filters.</p>
                 </div>
               ) : (
                 <>
-                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-                    {paginatedProducts.map((product) => (
-                      <ProductCard
-                        key={product.id}
-                        product={product}
-                        onClick={() => setSelectedProduct(product)}
-                      />
-                    ))}
+                  {/* Scrollable Products Grid */}
+                  <div className="flex-1 overflow-y-auto">
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 pb-4">
+                      {paginatedProducts.map((product) => (
+                        <ProductCard
+                          key={product.id}
+                          product={product}
+                          onClick={() => setSelectedProduct(product)}
+                        />
+                      ))}
+                    </div>
                   </div>
 
-                  {/* Pagination */}
+                  {/* Fixed Pagination at Bottom */}
                   {totalPages > 1 && (
-                    <div className="mt-8 flex items-center justify-center space-x-2">
+                    <div className="flex-shrink-0 bg-white py-4 border-t border-gray-200 flex items-center justify-center space-x-2">
                       <button
                         onClick={() => setCurrentPage((prev) => Math.max(1, prev - 1))}
                         disabled={currentPage === 1}
@@ -343,15 +351,16 @@ export default function Products() {
               )}
             </div>
           </div>
-        </div>
+          </div>
 
-        {/* Product Modal */}
-        {selectedProduct && (
-          <ProductModal
-            product={selectedProduct}
-            onClose={() => setSelectedProduct(null)}
-          />
-        )}
+          {/* Product Modal */}
+          {selectedProduct && (
+            <ProductModal
+              product={selectedProduct}
+              onClose={() => setSelectedProduct(null)}
+            />
+          )}
+        </div>
       </Layout>
     </ProtectedRoute>
   );
