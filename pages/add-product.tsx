@@ -143,6 +143,10 @@ export default function AddProduct() {
     const sanitizedColor = sanitizeInput(data.color);
     const finalBrand = showCustomBrand ? sanitizeInput(customBrand) : data.brand;
 
+    // Convert to numbers (form inputs return strings)
+    const price = Number(data.price);
+    const quantity = Number(data.quantity);
+
     // Validate name (alphabets and numbers only)
     if (!validateName(sanitizedName)) {
       setSubmitError('Product name can only contain letters and numbers');
@@ -150,13 +154,13 @@ export default function AddProduct() {
     }
 
     // Validate price (positive number)
-    if (!validatePrice(data.price)) {
+    if (!validatePrice(price)) {
       setSubmitError('Price must be a positive number');
       return;
     }
 
     // Validate quantity (positive integer)
-    if (!validateQuantity(data.quantity)) {
+    if (!validateQuantity(quantity)) {
       setSubmitError('Quantity must be a positive integer');
       return;
     }
@@ -177,12 +181,12 @@ export default function AddProduct() {
     const newProduct: Product = {
       id: Date.now().toString(),
       name: sanitizedName,
-      price: data.price,
+      price: price,
       inStock: data.inStock,
       category: data.category,
       brand: finalBrand,
       status: data.status,
-      quantity: data.quantity,
+      quantity: quantity,
       color: sanitizedColor,
       sku: sanitizedSKU,
       rating: 4.0, // Default rating
@@ -268,6 +272,7 @@ export default function AddProduct() {
                     {...register('price', {
                       required: 'Price is required',
                       min: { value: 0.01, message: 'Price must be greater than 0' },
+                      valueAsNumber: true,
                     })}
                     className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent outline-none"
                     placeholder="0.00"
@@ -288,6 +293,7 @@ export default function AddProduct() {
                     {...register('quantity', {
                       required: 'Quantity is required',
                       min: { value: 1, message: 'Quantity must be at least 1' },
+                      valueAsNumber: true,
                     })}
                     className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent outline-none"
                     placeholder="1"
